@@ -5,6 +5,7 @@ from .models import Users, Trips, Groups
 from django.contrib.auth import logout
 import bcrypt
 import re
+
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 def index(request):
@@ -15,11 +16,11 @@ def register(request):
         email = request.POST['email']
         password = request.POST['password']
         conf_password = request.POST['conf_password']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
+        name = request.POST['name']
+        username = request.POST['username']
         b_day=request.POST['b_day']
         print email
-        errors = Users.objects.validation(email, password, conf_password, first_name, last_name, b_day)
+        errors = Users.objects.validation(email, password, conf_password, name, username, b_day)
         if errors:
             for error in errors:
                 messages.error(request, error)
@@ -27,7 +28,7 @@ def register(request):
         else:
             print ('should be creating a user now...')
             pw_hash=bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-            Users.objects.create(email=email, pw_hash=pw_hash, first_name=first_name, last_name=last_name, b_day=b_day)
+            Users.objects.create(email=email, pw_hash=pw_hash, name=name, username=username, b_day=b_day)
             messages.success(request, 'You have registered successfully!')
             return redirect('/')
 
@@ -64,6 +65,7 @@ def process_trip(request):
         start_date = request.POST['start_date']
         end_date = request.POST['end_date']
         new_trip=Trips.objects.create(user=userid, destination=destination, plan=plan, start_date=start_date, end_date=end_date)
+        # new_trip=Trips.objects.create(destination=request.POST['destination'], start_date=request.POST['start_date'], end_date=request.POST['end_date'])
         new_trip.id
         trip_owner = Trips.objects.get(user=userid.id)
         context={'new_trips':new_trip, 'other_trips': other_trips}
@@ -73,8 +75,8 @@ def process_trip(request):
 
 def profile(request):
     userid = Users.objects.get(id=request.session['logged_user'])
-    messages.success(request, 'Welcome, {}!'.format(userid.first_name))
-    print userid.first_name
+    messages.success(request, 'Welcome, {}!'.format(userid.name))
+    print userid.name
     other_trips = Trips.objects.exclude(user=userid)
     my_trips = Trips.objects.filter(user=userid)
     print my_trips

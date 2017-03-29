@@ -90,7 +90,7 @@
         <tbody>
             {% for trip in other_trips %}
             <tr>
-                <td>{{trip.user.first_name}}</td>
+                <td>{{trip.user.name}}</td>
                 <td><a href='/trip_details/{{trip.id}}'>{{trip.destination}}</a></td>
                 <td>{{trip.start_date}}</td>
                 <td>{{trip.end_date}}</td>

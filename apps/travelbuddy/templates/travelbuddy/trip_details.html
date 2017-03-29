@@ -24,7 +24,7 @@
     <h3>
         Other user's joining the trip: {% for member in members %}
         <p>
-            {{member.guest.first_name}} {{member.guest.last_name}}
+            {{member.guest.name}} {{member.guest.username}}
         </p>
         {% endfor %}
     </h3>
